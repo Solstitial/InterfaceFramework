@@ -1,29 +1,57 @@
 package net.lightshard.interfaceframework;
 
-import java.lang.reflect.Constructor;
+import net.lightshard.interfaceframework.session.SessionManager;
+import net.lightshard.interfaceframework.ui.InterfaceDelegate;
+import net.lightshard.interfaceframework.ui.OpenInterfaceChecker;
+import net.lightshard.interfaceframework.ui.UserInterface;
+
+import static net.lightshard.interfaceframework.util.ReflectionUtil.instantiateObject;
 
 public class VersionHandler
 {
+    //////////////////////////////////////////////////
+    /// MEMBERS
     private final Version version;
+
+    //////////////////////////////////////////////////
+    /// PER-INTERFACEMANAGER OBJECTS
+    private SessionManager sessionManager;
+    private OpenInterfaceChecker openInterfaceChecker;
+
+    //////////////////////////////////////////////////
+    /// CONSTRUCTORS
 
     public VersionHandler(Version version)
     {
         this.version = version;
     }
 
-    protected InterfaceDelegate newDelegate()
+    //////////////////////////////////////////////////
+    /// PER-USERINTERFACE GETTERS
+
+    public SessionManager getSessionManager()
     {
-        Class<? extends InterfaceDelegate> clazz = version.getDelegateClazz();
-        try
-        {
-            Constructor<? extends InterfaceDelegate> con = clazz.getDeclaredConstructor(VersionHandler.class);
-            con.setAccessible(true);
-            return con.newInstance(new Object[]{this});
-        }
-        catch (Exception ignored)
-        {
-            return null;
-        }
+        if (sessionManager == null)
+            sessionManager = instantiateObject(version.getSessionManagerClazz(),
+                                               new Object[]{getOpenInterfaceChecker()});
+        return sessionManager;
+    }
+
+    public OpenInterfaceChecker getOpenInterfaceChecker()
+    {
+        if(openInterfaceChecker == null)
+            openInterfaceChecker = instantiateObject(version.getOpenInterfaceCheckerClazz(),
+                                                     new Object[]{});
+        return openInterfaceChecker;
+    }
+
+    //////////////////////////////////////////////////
+    /// PER-USERINTERFACE OBJECT CREATORS
+
+    public InterfaceDelegate newDelegate(UserInterface userInterface)
+    {
+        return instantiateObject(version.getDelegateClazz(),
+                                 new Object[]{userInterface});
     }
 
 }

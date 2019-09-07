@@ -1,24 +1,26 @@
-package net.lightshard.interfaceframework;
+package net.lightshard.interfaceframework.ui;
 
+import net.lightshard.interfaceframework.Version;
+import net.lightshard.interfaceframework.VersionHandler;
+import net.lightshard.interfaceframework.session.SessionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class InterfaceManager implements Listener, Runnable
 {
     private final JavaPlugin plugin;
-    private final Set<UserInterface> userInterfaces;
+    private final VersionHandler versionHandler;
+    private final SessionManager sessionManager;
 
     private boolean initialised = false;
 
     public InterfaceManager(JavaPlugin plugin)
     {
         this.plugin = plugin;
-        userInterfaces = new HashSet<UserInterface>();
+        versionHandler = new VersionHandler(Version.getVersion());
+        sessionManager = versionHandler.getSessionManager();
     }
 
     public void initialise()
@@ -33,14 +35,16 @@ public class InterfaceManager implements Listener, Runnable
     @Override
     public void run()
     {
-        for (UserInterface userInterface : userInterfaces)
-        {
-             // TODO - Get all sessions & act on them
-        }
     }
 
     public void show(UserInterface userInterface, Player player)
     {
-        userInterface.getDelegate(); // TODO
+        // TODO
     }
+
+    public VersionHandler getVersionHandler()
+    {
+        return versionHandler;
+    }
+
 }
