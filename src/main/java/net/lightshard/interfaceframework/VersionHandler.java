@@ -2,47 +2,93 @@ package net.lightshard.interfaceframework;
 
 import net.lightshard.interfaceframework.session.SessionManager;
 import net.lightshard.interfaceframework.ui.InterfaceDelegate;
-import net.lightshard.interfaceframework.ui.OpenInterfaceChecker;
+import net.lightshard.interfaceframework.ui.InterfaceManager;
+import net.lightshard.interfaceframework.ui.ListenerDelegate;
 import net.lightshard.interfaceframework.ui.UserInterface;
 
-import static net.lightshard.interfaceframework.util.ReflectionUtil.instantiateObject;
+import java.lang.reflect.Constructor;
 
 public class VersionHandler
 {
     //////////////////////////////////////////////////
     /// MEMBERS
+    private final InterfaceManager interfaceManager;
     private final Version version;
 
     //////////////////////////////////////////////////
     /// PER-INTERFACEMANAGER OBJECTS
     private SessionManager sessionManager;
-    private OpenInterfaceChecker openInterfaceChecker;
+    private ListenerDelegate listenerDelegate;
 
     //////////////////////////////////////////////////
     /// CONSTRUCTORS
 
-    public VersionHandler(Version version)
+    public VersionHandler(InterfaceManager interfaceManager, Version version)
     {
+        this.interfaceManager = interfaceManager;
         this.version = version;
     }
 
     //////////////////////////////////////////////////
-    /// PER-USERINTERFACE GETTERS
+    /// REFLECTION FUNCTION
+
+    public <T> T instantiateObject(Class<T> clazz, Class<?>[] types, Object[] values)
+    {
+        try
+        {
+            Constructor<T> con = clazz.getDeclaredConstructor(types);
+            con.setAccessible(true);
+            return con.newInstance(values);
+        }
+        catch (Exception exception)
+        {
+            exception.printStackTrace();
+            return null;
+        }
+    }
+
+    //////////////////////////////////////////////////
+    /// PER-USERINTERFACEMANAGER GETTERS
+
+    public InterfaceManager getInterfaceManager()
+    {
+        return interfaceManager;
+    }
 
     public SessionManager getSessionManager()
     {
         if (sessionManager == null)
-            sessionManager = instantiateObject(version.getSessionManagerClazz(),
-                                               new Object[]{getOpenInterfaceChecker()});
+        {
+            Class<?> clazz = version.getSessionManagerClazz();
+            Class<?>[] types = new Class<?>[]
+                    {
+                            VersionHandler.class,
+                    };
+            Object[] values = new Object[]
+                    {
+                            this
+                    };
+            sessionManager = (SessionManager) instantiateObject(clazz, types, values);
+        }
         return sessionManager;
     }
 
-    public OpenInterfaceChecker getOpenInterfaceChecker()
+    public ListenerDelegate getListenerDelegate()
     {
-        if(openInterfaceChecker == null)
-            openInterfaceChecker = instantiateObject(version.getOpenInterfaceCheckerClazz(),
-                                                     new Object[]{});
-        return openInterfaceChecker;
+        if (listenerDelegate == null)
+        {
+            Class<?> clazz = version.getListenerDelegateClazz();
+            Class<?>[] types = new Class<?>[]
+                    {
+                            VersionHandler.class,
+                    };
+            Object[] values = new Object[]
+                    {
+                            this
+                    };
+            listenerDelegate = (ListenerDelegate) instantiateObject(clazz, types, values);
+        }
+        return listenerDelegate;
     }
 
     //////////////////////////////////////////////////
@@ -50,8 +96,17 @@ public class VersionHandler
 
     public InterfaceDelegate newDelegate(UserInterface userInterface)
     {
-        return instantiateObject(version.getDelegateClazz(),
-                                 new Object[]{userInterface});
+        Class<?> clazz = version.getDelegateClazz();
+        Class<?>[] types = new Class<?>[]
+                {
+                        VersionHandler.class,
+                        UserInterface.class
+                };
+        Object[] values = new Object[]
+                {
+                        this,
+                        userInterface
+                };
+        return (InterfaceDelegate) instantiateObject(clazz, types, values);
     }
-
 }

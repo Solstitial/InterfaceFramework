@@ -1,17 +1,32 @@
 package net.lightshard.interfaceframework;
 
 import net.lightshard.interfaceframework.impl.spigot_1_8.InterfaceDelegate_1_8;
-import net.lightshard.interfaceframework.impl.spigot_1_8.OpenInterfaceChecker_1_8;
+import net.lightshard.interfaceframework.impl.spigot_1_8.ListenerDelegate_1_8;
 import net.lightshard.interfaceframework.impl.spigot_1_8.SessionManager_1_8;
 import net.lightshard.interfaceframework.session.SessionManager;
 import net.lightshard.interfaceframework.ui.InterfaceDelegate;
-import net.lightshard.interfaceframework.ui.OpenInterfaceChecker;
+import net.lightshard.interfaceframework.ui.ListenerDelegate;
 import org.bukkit.Bukkit;
 
 public enum Version
 {
-    SPIGOT_1_8("v1_8", SessionManager_1_8.class, OpenInterfaceChecker_1_8.class, InterfaceDelegate_1_8.class),
-    UNKNOWN("unknown", SessionManager_1_8.class, OpenInterfaceChecker_1_8.class, InterfaceDelegate_1_8.class);
+    /**
+     * Bountiful Update
+     */
+    VERSION_1_8("1.8", SessionManager_1_8.class, ListenerDelegate_1_8.class, InterfaceDelegate_1_8.class),
+//    /**
+//     * Combat Update (Pitiful Update?)
+//     */
+//    VERSION_1_9,
+//    /**
+//     * Aquatic Update
+//     */
+//    VERSION_1_13,
+//    /**
+//     * Village Pillage Update
+//     */
+//    VERSION_1_14,
+    UNKNOWN("unknown", Version.VERSION_1_8);
 
     //////////////////////////////////////////////////
     /// STATIC MEMBERS
@@ -21,7 +36,7 @@ public enum Version
     /// PER-INTERFACEMANAGER OBJECTS
     private final String versionNumber;
     private final Class<? extends SessionManager> sessionManagerClazz;
-    private final Class<? extends OpenInterfaceChecker> openInterfaceCheckerClazz;
+    private final Class<? extends ListenerDelegate> listenerDelegateClazz;
 
     //////////////////////////////////////////////////
     /// PER-USERINTERFACE OBJECTS
@@ -32,23 +47,32 @@ public enum Version
 
     Version(String versionNumber,
             Class<? extends SessionManager> sessionManagerClazz,
-            Class<? extends OpenInterfaceChecker> openInterfaceCheckerClazz,
+            Class<? extends ListenerDelegate> listenerDelegateClazz,
             Class<? extends InterfaceDelegate> delegateClazz)
     {
         this.versionNumber = versionNumber;
         this.sessionManagerClazz = sessionManagerClazz;
-        this.openInterfaceCheckerClazz = openInterfaceCheckerClazz;
+        this.listenerDelegateClazz = listenerDelegateClazz;
         this.delegateClazz = delegateClazz;
+    }
+
+    Version(String versionNumber, Version toCopy)
+    {
+        this.versionNumber = versionNumber;
+        this.sessionManagerClazz = toCopy.sessionManagerClazz;
+        this.listenerDelegateClazz = toCopy.listenerDelegateClazz;
+        this.delegateClazz = toCopy.delegateClazz;
     }
 
     //////////////////////////////////////////////////
     /// GETTERS & SETTERS
 
-    public static Version getVersion()
+    public static Version getServerVersion()
     {
         if (serverVersion == null)
         {
             String bukkitVersion = Bukkit.getVersion().toLowerCase();
+            serverVersion = UNKNOWN;
             for (Version version : values())
             {
                 if (bukkitVersion.contains(version.versionNumber))
@@ -57,7 +81,6 @@ public enum Version
                     break;
                 }
             }
-            serverVersion = UNKNOWN;
         }
         return serverVersion;
     }
@@ -67,9 +90,9 @@ public enum Version
         return sessionManagerClazz;
     }
 
-    public Class<? extends OpenInterfaceChecker> getOpenInterfaceCheckerClazz()
+    public Class<? extends ListenerDelegate> getListenerDelegateClazz()
     {
-        return openInterfaceCheckerClazz;
+        return listenerDelegateClazz;
     }
 
     public Class<? extends InterfaceDelegate> getDelegateClazz()

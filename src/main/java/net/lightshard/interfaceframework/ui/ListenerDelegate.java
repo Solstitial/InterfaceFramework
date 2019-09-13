@@ -1,27 +1,20 @@
-package net.lightshard.interfaceframework.session;
+package net.lightshard.interfaceframework.ui;
 
 import net.lightshard.interfaceframework.VersionHandler;
-import net.lightshard.interfaceframework.ui.UserInterface;
-import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-public abstract class SessionManager
+public abstract class ListenerDelegate implements Listener
 {
-    private final VersionHandler versionHandler;
+    private VersionHandler versionHandler;
 
-    public SessionManager(VersionHandler versionHandler)
+    public ListenerDelegate(VersionHandler versionHandler)
     {
         this.versionHandler = versionHandler;
     }
-
-    public abstract Session getSession(Player player);
-
-    public abstract void openInterface(UserInterface userInterface, Player player);
-
-    public abstract void tick();
 
     public abstract void onInventoryClick(InventoryClickEvent event);
 
@@ -35,4 +28,5 @@ public abstract class SessionManager
     {
         return versionHandler;
     }
+
 }

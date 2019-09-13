@@ -14,6 +14,11 @@ public class SessionMeta
         metaObjects = new HashMap<String, SessionMetaObject>();
     }
 
+    public boolean exists(String key)
+    {
+        return metaObjects.containsKey(key.toUpperCase());
+    }
+
     public SessionMetaObject get(String key)
     {
         return metaObjects.get(key.toUpperCase());
@@ -22,6 +27,11 @@ public class SessionMeta
     public void set(String key, SessionMetaObject object)
     {
         metaObjects.put(key.toUpperCase(), object);
+    }
+
+    public void remove(String key)
+    {
+        metaObjects.remove(key.toUpperCase());
     }
 
     public Set<String> keySet()
