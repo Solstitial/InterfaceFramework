@@ -45,11 +45,9 @@ public class ListenerDelegate_1_8 extends ListenerDelegate
         long now = System.currentTimeMillis();
         if(System.currentTimeMillis() - metaObject.asType() < CLICK_DELAY)
         {
-            Bukkit.broadcastMessage("CLICK REJECTED");
             return;
         }
 
-        Bukkit.broadcastMessage("CLICK WENT THROUGH");
         metaObject.set(now);
         getVersionHandler().getSessionManager().onInventoryClick(event);
     }
