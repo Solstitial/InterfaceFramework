@@ -13,7 +13,7 @@ public class VersionHandler
     //////////////////////////////////////////////////
     /// MEMBERS
     private final InterfaceManager interfaceManager;
-    private final Version version;
+    private final DelegationVersion version;
 
     //////////////////////////////////////////////////
     /// PER-INTERFACEMANAGER OBJECTS
@@ -23,7 +23,7 @@ public class VersionHandler
     //////////////////////////////////////////////////
     /// CONSTRUCTORS
 
-    public VersionHandler(InterfaceManager interfaceManager, Version version)
+    public VersionHandler(InterfaceManager interfaceManager, DelegationVersion version)
     {
         this.interfaceManager = interfaceManager;
         this.version = version;

@@ -6,35 +6,20 @@ import net.lightshard.interfaceframework.impl.spigot_1_8.SessionManager_1_8;
 import net.lightshard.interfaceframework.session.SessionManager;
 import net.lightshard.interfaceframework.ui.InterfaceDelegate;
 import net.lightshard.interfaceframework.ui.ListenerDelegate;
-import org.bukkit.Bukkit;
+import net.lightshard.versionframework.Version;
 
-public enum Version
+public enum DelegationVersion
 {
-    /**
-     * Bountiful Update
-     */
-    VERSION_1_8("1.8", SessionManager_1_8.class, ListenerDelegate_1_8.class, InterfaceDelegate_1_8.class),
-//    /**
-//     * Combat Update (Pitiful Update?)
-//     */
-//    VERSION_1_9,
-//    /**
-//     * Aquatic Update
-//     */
-//    VERSION_1_13,
-//    /**
-//     * Village Pillage Update
-//     */
-//    VERSION_1_14,
-    UNKNOWN("unknown", Version.VERSION_1_8);
+    VERSION_1_8(Version.VERSION_1_8, SessionManager_1_8.class, ListenerDelegate_1_8.class, InterfaceDelegate_1_8.class),
+    UNKNOWN(Version.UNKNOWN, DelegationVersion.VERSION_1_8);
 
     //////////////////////////////////////////////////
     /// STATIC MEMBERS
-    private static Version serverVersion;
+    private static DelegationVersion delegateVersion;
 
     //////////////////////////////////////////////////
     /// PER-INTERFACEMANAGER OBJECTS
-    private final String versionNumber;
+    private final Version version;
     private final Class<? extends SessionManager> sessionManagerClazz;
     private final Class<? extends ListenerDelegate> listenerDelegateClazz;
 
@@ -45,20 +30,20 @@ public enum Version
     //////////////////////////////////////////////////
     /// CONSTRUCTORS
 
-    Version(String versionNumber,
-            Class<? extends SessionManager> sessionManagerClazz,
-            Class<? extends ListenerDelegate> listenerDelegateClazz,
-            Class<? extends InterfaceDelegate> delegateClazz)
+    DelegationVersion(Version version,
+                      Class<? extends SessionManager> sessionManagerClazz,
+                      Class<? extends ListenerDelegate> listenerDelegateClazz,
+                      Class<? extends InterfaceDelegate> delegateClazz)
     {
-        this.versionNumber = versionNumber;
+        this.version = version;
         this.sessionManagerClazz = sessionManagerClazz;
         this.listenerDelegateClazz = listenerDelegateClazz;
         this.delegateClazz = delegateClazz;
     }
 
-    Version(String versionNumber, Version toCopy)
+    DelegationVersion(Version version, DelegationVersion toCopy)
     {
-        this.versionNumber = versionNumber;
+        this.version = version;
         this.sessionManagerClazz = toCopy.sessionManagerClazz;
         this.listenerDelegateClazz = toCopy.listenerDelegateClazz;
         this.delegateClazz = toCopy.delegateClazz;
@@ -67,22 +52,22 @@ public enum Version
     //////////////////////////////////////////////////
     /// GETTERS & SETTERS
 
-    public static Version getServerVersion()
+    public static DelegationVersion getDelegateVersion()
     {
-        if (serverVersion == null)
+        if (delegateVersion == null)
         {
-            String bukkitVersion = Bukkit.getVersion().toLowerCase();
-            serverVersion = UNKNOWN;
-            for (Version version : values())
+            Version version = Version.getServerVersion();
+            delegateVersion = UNKNOWN;
+            for (DelegationVersion delegationVersion : values())
             {
-                if (bukkitVersion.contains(version.versionNumber))
+                if (delegationVersion.version.equals(version))
                 {
-                    serverVersion = version;
+                    delegateVersion = delegationVersion;
                     break;
                 }
             }
         }
-        return serverVersion;
+        return delegateVersion;
     }
 
     public Class<? extends SessionManager> getSessionManagerClazz()

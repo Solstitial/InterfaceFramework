@@ -1,6 +1,6 @@
 package net.lightshard.interfaceframework.ui;
 
-import net.lightshard.interfaceframework.Version;
+import net.lightshard.interfaceframework.DelegationVersion;
 import net.lightshard.interfaceframework.VersionHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -40,7 +40,7 @@ public class InterfaceManager implements Listener, Runnable
     public InterfaceManager(JavaPlugin plugin)
     {
         this.plugin = plugin;
-        versionHandler = new VersionHandler(this, Version.getServerVersion());
+        versionHandler = new VersionHandler(this, DelegationVersion.getDelegateVersion());
 
         interfaces = new HashSet<UserInterface>();
     }
